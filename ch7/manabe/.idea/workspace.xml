@@ -1,9 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="c6184a42-8d78-4ec7-870e-e958ab44aa1f" name="Default Changelist" comment="">
-      <change beforePath="$PROJECT_DIR$/../../ch6/manabe/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/../../ch6/manabe/.idea/workspace.xml" afterDir="false" />
-    </list>
+    <list default="true" id="c6184a42-8d78-4ec7-870e-e958ab44aa1f" name="Default Changelist" comment="" />
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -112,6 +110,7 @@
     <session id="2041076589">
       <usages-collector id="statistics.lifecycle.project">
         <counts>
+          <entry key="project.closed" value="1" />
           <entry key="project.open.time.0" value="1" />
           <entry key="project.opened" value="1" />
         </counts>
@@ -318,7 +317,7 @@
       </list>
     </option>
   </component>
-  <component name="ProjectFrameBounds" extendedState="7">
+  <component name="ProjectFrameBounds" extendedState="6">
     <option name="x" value="91" />
     <option name="y" value="181" />
     <option name="width" value="1553" />
