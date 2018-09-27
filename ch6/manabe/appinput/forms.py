@@ -13,6 +13,7 @@ class AppForm(forms.ModelForm):
         super().__init__(*args, **kwargs)
 
     name = forms.CharField(
+        required=True,
         error_messages={'required': "不能为空"},
         label=u"APP组件名称",
         widget=forms.TextInput(
@@ -63,11 +64,19 @@ class AppForm(forms.ModelForm):
         ),
     )
     package_name = forms.CharField(
-        error_messages={'required': "不能为空"},
         label=u"软件包名称",
         widget=forms.TextInput(
             attrs={
-                'placeholder': "Package Name",
+                'placeholder': "编译后的软件包名称，没有可不填",
+                'class': 'input-text',
+            }
+        ),
+    )
+    zip_package_name = forms.CharField(
+        label=u"压缩包名称",
+        widget=forms.TextInput(
+            attrs={
+                'placeholder': "软件包和配置文件集成的压缩包，没有可不填",
                 'class': 'input-text',
             }
         ),

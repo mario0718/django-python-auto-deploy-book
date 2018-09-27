@@ -16,7 +16,13 @@ class App(CommonInfo):
     is_restart_status = models.BooleanField(default=True,
                                             verbose_name="是否重启")
     package_name = models.CharField(max_length=128,
+                                    blank=True,
+                                    null=True,
                                     verbose_name="软件包名")
+    zip_package_name = models.CharField(max_length=128,
+                                        blank=True,
+                                        null=True,
+                                        verbose_name="压缩包名")
     op_log_no = models.IntegerField(blank=True,
                                     null=True,
                                     default=0)
