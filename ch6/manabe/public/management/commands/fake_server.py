@@ -21,11 +21,9 @@ def fake_server_data():
             op_user = choice(user_set)
             app_item = choice(app_set)
             env_item = choice(env_set)
-            app_path = '/usr/local/'
-            salt_cmd = 'manabe.sh'
+
             Server.objects.create(name=name, ip_address=ip_address, port=port,
                                   salt_name=salt_name, env_name=env_item,
                                   app_name=app_item, op_user=op_user,
-                                  app_user=app_user, app_path=app_path,
-                                  salt_cmd=salt_cmd)
+                                  app_user=app_user)
     print('create all server data')
