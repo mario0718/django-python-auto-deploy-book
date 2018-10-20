@@ -10,11 +10,12 @@ from django.utils import timezone
 from django.db.models import Q
 from django.http import HttpResponseRedirect
 from django.conf import settings
+from django.http import HttpResponse
 import jenkins
 from .forms import DeployForm
 from .models import DeployPool, DeployStatus
+from appinput.models import App
 from rightadmin.models import Action
-from django.conf import settings
 from public.user_group import is_right
 
 
@@ -121,55 +122,66 @@ class DeployUpdateView(UpdateView):
 @csrf_exempt
 def jenkins_build(request):
     dic = {}
+    app_name = request.POST.get('app_name')
     deploy_version = request.POST.get('deploy_version')
+    jenkins_job = request.POST.get('jenkins_job')
     deploy_version_set = DeployPool.objects.get(name=deploy_version)
-    app_name = deploy_version_set.app_name.name
-    app_id = deploy_version_set.app_name.id
-    site_name = deploy_version_set.site_name.name
     branch_build = deploy_version_set.branch_build
-    jenkins_job = deploy_version_set.app_name.jenkins_job
+    app_set = App.objects.get(name=app_name)
+    git_url = app_set.git_url
+    package_name = app_set.package_name
+    dir_build_file = app_set.dir_build_file
+    zip_package_name = app_set.zip_package_name
+    build_cmd = app_set.build_cmd
     current_user = request.user
 
-    dic = {
-        'SYSTEM': site_name,
-        'SERVER_NAME': app_name,
-        'BRANCH_TO_BUILD': branch_build,
-        'DEPLOY_VERSION': deploy_version
+    jenkins_dict = {
+        'git_url': git_url,
+        'branch_build': branch_build,
+        'package_name': package_name,
+        'app_name': app_name,
+        'deploy_version': deploy_version,
+        'dir_build_file': dir_build_file,
+        'zip_package_name': zip_package_name,
+        'build_cmd': build_cmd
     }
+    print(jenkins_dict)
 
-    if all_is_not_null([jenkins_job, site_name, app_name, branch_build, deploy_version]):
-        URL = settings.JENKINS_URL
-        USERNAME = settings.JENKINS_USERNAME
-        PASSWORD = settings.JENKINS_PASSWORD
+    if all_is_not_null([jenkins_job, app_name, branch_build, deploy_version]):
+        jenkins_url = settings.JENKINS_URL
+        jenkins_username = settings.JENKINS_USERNAME
+        jenkins_password = settings.JENKINS_PASSWORD
+        nginx_url = settings.NGINX_URL
         result = {}
-        server = jenkins.Jenkins(url=URL, username=USERNAME, password=PASSWORD)
+        server = jenkins.Jenkins(url=jenkins_url,
+                                 username=jenkins_username,
+                                 password=jenkins_password)
         next_build_number = server.get_job_info(jenkins_job)['nextBuildNumber']
-        server.build_job(jenkins_job, dic)
+        server.build_job(jenkins_job, jenkins_dict)
         from time import sleep
         sleep(10)
         result = {"return": u"请耐心等候。。。"}
-        nginx_url = u"http://10.17.162.84/autodeploy/%s/%s/%s" % (site_name,  app_name, deploy_version)
+        nginx_url = "{}/{}/{}".format(nginx_url, app_name, deploy_version)
         try:
             git_version = server.get_build_info(jenkins_job, next_build_number)["actions"][3]['buildsByBranchName']['origin/master']['marked']['SHA1']
         except:
             git_version = "None"
-        obj = DeployPool.objects.get(name=deploy_version)
-        obj.jenkins_number = str(next_build_number)
-        obj.code_number = git_version
-        obj.nginx_url = nginx_url
-        obj.salt_module_path = salt_module_path
-        obj.deploy_status = 'BUILD'
-        obj.save()
-        insert2deploypool(deploy_version, current_user)
+        DeployPool.objects.filter(name=deploy_version).update(
+            jenkins_number=str(next_build_number),
+            code_number=git_version,
+            nginx_url=nginx_url,
+            deploy_status=DeployStatus.objects.get(name='BUILD')
+        )
+
+        result = "亲，没有权限，只有管理员才可进入！"
+        return HttpResponse(result)
 
 
 def all_is_not_null(*args):
     for value in args:
-        # print value
         if value == 'None' or len(value) == 0:
             return False
     return True
-
 
 @csrf_exempt
 def jenkins_status(request):

@@ -42,6 +42,15 @@
         </div>
     </div>
     <div class="row cl">
+        <label class="form-label col-xs-4 col-sm-3">{{ form.dir_build_file.label_tag }}：</label>
+        <div class="formControls col-xs-8 col-sm-9">
+            {{ form.dir_build_file }}
+            {% for error in form.dir_build_file.errors %}
+                <span>{{ error }}</span>
+            {% endfor %}
+        </div>
+    </div>
+    <div class="row cl">
         <label class="form-label col-xs-4 col-sm-3">{{ form.build_cmd.label_tag }}：</label>
         <div class="formControls col-xs-8 col-sm-9">
             {{ form.build_cmd }}

@@ -11,7 +11,10 @@ class App(CommonInfo):
                                    verbose_name="JENKINS JOB名称")
     git_url = models.CharField(max_length=512,
                                verbose_name="Git地址")
+    dir_build_file = models.CharField(max_length=512,
+                                      verbose_name="编译目录")
     build_cmd = models.CharField(max_length=512,
+                                 default="./",
                                  verbose_name="编译命令")
     is_restart_status = models.BooleanField(default=True,
                                             verbose_name="是否重启")

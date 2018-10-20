@@ -2,14 +2,14 @@ $(".buildBtn").click(function(e){
     $("#modal_app_name").html($(this).attr('app_name'));
     $("#modal_deploy_version").html($(this).attr('deploy_version'));
     var jenkins_job_console = '{{jenkins_url}}' + $(this).attr('jenkins_job') + '/lastBuild/console '
-    $("#modal_jenkins_job").html("<a href=" + jenkins_job_console + " target='_blank'>" + $(this).attr('jenkins_job')+ "</a>");
+    $("#modal_jenkins_job").html($(this).attr('jenkins_job'));
      $("#modal-demo").modal("show");
 });
 
 $(".checkBtn").click(function(e){
     var app_name = $(this).attr('app_name');
     var deploy_version = $(this).attr('deploy_version');
-    var check_url = '{{jenkins_url}}' + app_name + '/' + deploy_version + '/';
+    var check_url = '{{nginx_url}}/' + app_name + '/' + deploy_version + '/';
     openFullScreen(check_url)
 
 });
@@ -22,13 +22,9 @@ function openFullScreen (url) {
     var newWin = window.open(url, name, feature);
 }
 $(".btn_gen_pkg").click(function(){
-    var loopcount = $(this).closest('#gen_pkg_id').attr('loopcount');
-    var jenkins_job = $(this).attr('jenkins_job');
-    var deploy_version = $(this).attr('deploy_version');
-    var app_name = $(this).attr('app_name');
-    console.log("dsfdsf");
-    console.log(app_name, jenkins_job, app_name);
-    var _self = this;
+    var deploy_version = $("#modal_deploy_version").text();
+    var app_name = $("#modal_app_name").text();
+    var jenkins_job = $("#modal_jenkins_job").text();
 
     promiseJenkins = $.ajax({
         url:'{% url 'deploy:jenkins_build' %}',

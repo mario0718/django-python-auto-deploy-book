@@ -129,7 +129,7 @@ USE_TZ = True
 STATIC_URL = '/static/'
 STATICFILES_DIRS = (os.path.join(BASE_DIR, "static"), )
 
-NGINX_URL = "http://192.168.1.111/"
+NGINX_URL = "http://192.168.1.111"
 
 JENKINS_URL = "http://192.168.1.112:8088/"
 JENKINS_USERNAME = 'root'

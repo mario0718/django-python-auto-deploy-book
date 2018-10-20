@@ -53,6 +53,16 @@ class AppForm(forms.ModelForm):
             }
         ),
     )
+    dir_build_file = forms.CharField(
+        error_messages={'required': "不能为空"},
+        label=u"编译目录",
+        widget=forms.TextInput(
+            attrs={
+                'placeholder': "./",
+                'class': 'input-text',
+            }
+        ),
+    )
     build_cmd = forms.CharField(
         error_messages={'required': "不能为空"},
         label=u"编译命令",

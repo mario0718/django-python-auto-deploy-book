@@ -135,16 +135,9 @@
                     APP名称：<span id="modal_app_name" ></span><br/>
                     发布单：<span id="modal_deploy_version" class="label label-primary radius"></span><br/>
                     Jenkins Job:<span id="modal_jenkins_job" ></span><br/><br/>
-                    <button class="btn_gen_pkg btn btn-danger"
-                            app_name="{{item.app_name}}"
-                            deploy_version="{{item.name}}"
-                            jenkins_job="{{item.app_name.jenkins_job}}">
+                    <button class="btn_gen_pkg btn btn-danger">
                         开始构建
                     </button>
-
-
-                    <div id="gen_pkg_progress{{ forloop.counter }}" ></div>
-
                 </p>
 			</div>
 			<div class="modal-footer">
