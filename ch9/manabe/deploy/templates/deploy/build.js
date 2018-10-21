@@ -3,8 +3,14 @@ $(".buildBtn").click(function(e){
     $("#modal_deploy_version").html($(this).attr('deploy_version'));
     var jenkins_job_console = '{{jenkins_url}}' + $(this).attr('jenkins_job') + '/lastBuild/console '
     $("#modal_jenkins_job").html($(this).attr('jenkins_job'));
+    $("#modal_jenkins_url").html(jenkins_job_console);
      $("#modal-demo").modal("show");
 });
+
+function modal_close(){
+	$("#modal-demo").modal("hide");
+	location.reload();
+}
 
 $(".checkBtn").click(function(e){
     var app_name = $(this).attr('app_name');
@@ -36,10 +42,26 @@ $(".btn_gen_pkg").click(function(){
         },
         dataType: 'json',
         beforeSend: function(){
+            $(".btn_gen_pkg").attr("disabled","disabled");
+             $(".btn_gen_pkg").hide();
+            $("#build_progress").html("亲，正在编译，请耐心等候...");
         },
          error: function (jqXHR, textStatus, errorThrown) {
+            $("#build_progress").html("系统问题,请联系开发同事");
         },
         success: function(json){
+            console.log(json);
+            if (json['return'] == "success") {
+                $("#build_progress").html(
+                    "<span class='label label-success radius'>完成编译, 编译次数："
+                    + json['build_number'] + "</span>");
+            }
+            if (json['return'] == "error") {
+                $("#build_progress").html(
+                "<span class='label label-error radius'>编译出错, 编译次数："
+                + json['build_number'] + "</span>");
+            }
+
         }
     });
 

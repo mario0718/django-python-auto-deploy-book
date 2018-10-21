@@ -128,21 +128,21 @@
 		<div class="modal-content radius">
 			<div class="modal-header">
 				<h3 class="modal-title">构建程序发布包</h3>
-				<a class="close" data-dismiss="modal" aria-hidden="true" href="javascript:void();">×</a>
 			</div>
 			<div class="modal-body">
 				<p>
                     APP名称：<span id="modal_app_name" ></span><br/>
                     发布单：<span id="modal_deploy_version" class="label label-primary radius"></span><br/>
-                    Jenkins Job:<span id="modal_jenkins_job" ></span><br/><br/>
+                    Jenkins Job:<span id="modal_jenkins_job" ></span><br/>
+                    Jenkins Url:<span id="modal_jenkins_url" ></span><br/><br/>
                     <button class="btn_gen_pkg btn btn-danger">
                         开始构建
                     </button>
+                    <span id="build_progress"></span>
                 </p>
 			</div>
 			<div class="modal-footer">
-				<button class="btn btn-primary" id="changeEnvModal">确定</button>
-				<button class="btn" data-dismiss="modal" aria-hidden="true">取消</button>
+				<button class="btn" onClick="modal_close()">关闭</button>
 			</div>
 		</div>
 	</div>

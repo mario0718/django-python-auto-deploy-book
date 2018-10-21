@@ -10,8 +10,9 @@ from django.utils import timezone
 from django.db.models import Q
 from django.http import HttpResponseRedirect
 from django.conf import settings
-from django.http import HttpResponse
+from django.http import HttpResponse, JsonResponse
 import jenkins
+import requests
 from .forms import DeployForm
 from .models import DeployPool, DeployStatus
 from appinput.models import App
@@ -121,7 +122,6 @@ class DeployUpdateView(UpdateView):
 
 @csrf_exempt
 def jenkins_build(request):
-    dic = {}
     app_name = request.POST.get('app_name')
     deploy_version = request.POST.get('deploy_version')
     jenkins_job = request.POST.get('jenkins_job')
@@ -145,14 +145,12 @@ def jenkins_build(request):
         'zip_package_name': zip_package_name,
         'build_cmd': build_cmd
     }
-    print(jenkins_dict)
 
     if all_is_not_null([jenkins_job, app_name, branch_build, deploy_version]):
         jenkins_url = settings.JENKINS_URL
         jenkins_username = settings.JENKINS_USERNAME
         jenkins_password = settings.JENKINS_PASSWORD
         nginx_url = settings.NGINX_URL
-        result = {}
         server = jenkins.Jenkins(url=jenkins_url,
                                  username=jenkins_username,
                                  password=jenkins_password)
@@ -160,21 +158,40 @@ def jenkins_build(request):
         server.build_job(jenkins_job, jenkins_dict)
         from time import sleep
         sleep(10)
-        result = {"return": u"请耐心等候。。。"}
-        nginx_url = "{}/{}/{}".format(nginx_url, app_name, deploy_version)
-        try:
-            git_version = server.get_build_info(jenkins_job, next_build_number)["actions"][3]['buildsByBranchName']['origin/master']['marked']['SHA1']
-        except:
-            git_version = "None"
-        DeployPool.objects.filter(name=deploy_version).update(
-            jenkins_number=str(next_build_number),
-            code_number=git_version,
-            nginx_url=nginx_url,
-            deploy_status=DeployStatus.objects.get(name='BUILD')
-        )
+        while True:
+            building_info = server.get_build_info(jenkins_job, next_build_number)["building"]
+            built_result = server.get_build_info(jenkins_job, next_build_number)["result"]
+            sleep(2)
+            if building_info is False and built_result == 'SUCCESS':
+                nginx_url = "{}/{}/{}".format(nginx_url, app_name, deploy_version)
+                try:
+                    git_seg = server.get_build_info(jenkins_job, next_build_number)["actions"][5]
+                    print(next_build_number, "@@@@@@@@@@@")
+                    print(git_seg['lastBuiltRevision']['SHA1'], "###########")
+                    git_version = git_seg['lastBuiltRevision']['SHA1']
+                except Exception as e:
+                    print(e)
+                    git_version = "None"
+                DeployPool.objects.filter(name=deploy_version).update(
+                    jenkins_number=str(next_build_number),
+                    code_number=git_version,
+                    nginx_url=nginx_url,
+                    deploy_status=DeployStatus.objects.get(name='BUILD'),
+                    create_user=current_user
+                )
+                result = {"return": "success", "build_number": next_build_number}
+                status_code = 201
+                break
+            if building_info is False and built_result == 'FAILURE':
+                result = {"return": "error", "build_number": next_build_number}
+                status_code = 501
+                break
 
-        result = "亲，没有权限，只有管理员才可进入！"
-        return HttpResponse(result)
+        return JsonResponse(result, status=status_code)
+
+    else:
+        result = {"return": "error"}
+        return JsonResponse(result, status=500)
 
 
 def all_is_not_null(*args):
@@ -183,6 +200,19 @@ def all_is_not_null(*args):
             return False
     return True
 
+
 @csrf_exempt
 def jenkins_status(request):
-    pass
+    result_dict = {}
+    jenkins_url = request.POST.get('jenkins_url')
+    result = requests.get(jenkins_url)
+    result_text = json.loads(result.text)
+    result_dict['id'] = result_text['id']
+    result_dict['url'] = result_text['url']
+    result_dict['result'] = result_text['result']
+    print(result_dict)
+    if result.status_code == 200:
+        return render_to_json_response(result_dict, status=200)
+    else:
+        result_dict = {'return': u"Not enough params"}
+        return render_to_json_response(result_dict, status=400)
