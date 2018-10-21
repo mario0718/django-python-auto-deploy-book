@@ -32,6 +32,7 @@ $(".btn_gen_pkg").click(function(){
     var app_name = $("#modal_app_name").text();
     var jenkins_job = $("#modal_jenkins_job").text();
 
+    //使用 jquery的promise技术来实现前端和后端之间异步的顺序调用
     //第一步，将任务发送到jenkins
     var promiseJenkinsA = $.ajax({
         url:'{% url 'deploy:jenkins_build' %}',
@@ -45,7 +46,7 @@ $(".btn_gen_pkg").click(function(){
         beforeSend: function(){
             $(".btn_gen_pkg").attr("disabled","disabled");
              $(".btn_gen_pkg").hide();
-            $("#build_progress").html("亲，正在编译，请耐心等候...");
+            $("#build_progress").html("亲，正在编译，请耐心等候...<i class='fa fa-spinner fa-pulse fa-3x'></i>");
         },
          error: function (jqXHR, textStatus, errorThrown) {
             $("#build_progress").html("系统问题,请联系开发同事");
@@ -68,7 +69,7 @@ $(".btn_gen_pkg").click(function(){
                 },
                 dataType: 'json',
                 error: function (jqXHR, textStatus, errorThrown) {
-                    $("#build_progress").html("系统问题,请联系开发同事");
+                    $("#build_progress").html("系统问题,请联系开发同事!<i class='fa fa-ban fa-3x'></i>");
                 },
                 success: function(data){
                     //当编译成功，或失败之后，清除定时器, 成功了就使用ajax post更新发布单状态。
@@ -87,11 +88,11 @@ $(".btn_gen_pkg").click(function(){
                                 if (data['return'] == 'success') {
                                     $("#build_progress").html(
                                     "<span class='label label-success radius'>完成编译, 编译次数："
-                                    + data['build_number'] + "</span>");
+                                    + data['build_number'] + "</span><i class='fa fa-check fa-3x'></i>");
                                 } else {
                                     $("#build_progress").html(
                                     "<span class='label label-error radius'>编译成功, 更新发布单错误, 编译次数："
-                                    + data['build_number'] + "</span>");
+                                    + data['build_number'] + "</span><i class='fa fa-ban fa-3x'></i>");
                                 }
                             }
                         );
@@ -100,7 +101,7 @@ $(".btn_gen_pkg").click(function(){
                         clearInterval(intervalKey);
                         $("#build_progress").html(
                         "<span class='label label-error radius'>编译出错, 编译次数："
-                        + json['build_number'] + "</span>");
+                        + json['build_number'] + "</span><i class='fa fa-ban fa-3x'></i>");
                     }
                 }
             });

@@ -3,6 +3,10 @@
 {% load staticfiles %}
 {% block title %} 发布单列表 {% endblock %}
 
+{% block ext-css %}
+<link rel="stylesheet" href="{% static 'lib/font-awesome-4.7.0/css/font-awesome.min.css'%}" />
+{% endblock%}
+
 {% block content %}
 <div>
     <span class="l">
@@ -35,9 +39,6 @@
     </th>
     <th>
         部署类型
-    </th>
-    <th>
-        状态
     </th>
     <th>
         操作
@@ -95,9 +96,6 @@
 
         </td>
         <td>
-            {{ item.deploy_status.description }}
-        </td>
-        <td>
             {% ifequal item.deploy_status.name "CREATE" %}
                 <button  class="btn btn-primary-outline radius buildBtn"
                          app_name="{{item.app_name}}"
@@ -107,12 +105,6 @@
                 </button>
             {% endifequal %}
             {% ifequal item.deploy_status.name "BUILD" %}
-            <button  class="btn btn-primary-outline radius buildBtn"
-                         app_name="{{item.app_name}}"
-                         deploy_version="{{item.name}}"
-                         jenkins_job="{{item.app_name.jenkins_job}}">
-                    编译
-                </button>
                 <button  class="btn btn-success-outline radius checkBtn"
                          app_name="{{item.app_name}}"
                          deploy_version="{{item.name}}">

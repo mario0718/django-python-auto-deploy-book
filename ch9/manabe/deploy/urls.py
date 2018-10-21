@@ -4,6 +4,7 @@ from django.contrib.auth.decorators import login_required
 from .views import DeployCreateView, DeployUpdateView, DeployDetailView, DeployListView
 from .views import jenkins_build, jenkins_status, update_deploypool_jenkins
 from .deploy_views import PublishView, DeployView, OperateView, HistoryView, deploy_cmd
+from .upload_views import DeployVersionUploadView, fileupload
 
 app_name = 'deploy'
 
@@ -22,6 +23,14 @@ urlpatterns = [
          name='update_deploypool_jenkins'),
 ]
 
+# upload
+urlpatterns += [
+    path('upload/', DeployVersionUploadView.as_view(),
+         name='upload'),
+    path('file_upload/', fileupload, name='file-upload'),
+]
+
+# deploy
 urlpatterns += [
     path('publish/', login_required(PublishView.as_view()),
          name='publish'),

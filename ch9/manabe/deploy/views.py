@@ -10,7 +10,7 @@ from django.utils import timezone
 from django.db.models import Q
 from django.http import HttpResponseRedirect
 from django.conf import settings
-from django.http import HttpResponse, JsonResponse
+from django.http import JsonResponse
 import jenkins
 from .forms import DeployForm
 from .models import DeployPool, DeployStatus
@@ -213,8 +213,8 @@ def update_deploypool_jenkins(request):
     next_build_number = request.POST.get('next_build_number')
     git_version = request.POST.get('git_version')
     # 按nginx服务器地址，app应用，发布单号的目录层次构建软件包目录
-    nginx_url = settings.NGINX_URL
-    nginx_url = "{}/{}/{}".format(nginx_url, app_name, deploy_version)
+    nginx_base_url = settings.NGINX_URL
+    nginx_url = "{}/{}/{}".format(nginx_base_url, app_name, deploy_version)
     try:
         DeployPool.objects.filter(name=deploy_version).update(
             jenkins_number=str(next_build_number),
