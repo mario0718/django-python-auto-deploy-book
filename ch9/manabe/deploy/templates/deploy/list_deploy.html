@@ -107,6 +107,12 @@
                 </button>
             {% endifequal %}
             {% ifequal item.deploy_status.name "BUILD" %}
+            <button  class="btn btn-primary-outline radius buildBtn"
+                         app_name="{{item.app_name}}"
+                         deploy_version="{{item.name}}"
+                         jenkins_job="{{item.app_name.jenkins_job}}">
+                    编译
+                </button>
                 <button  class="btn btn-success-outline radius checkBtn"
                          app_name="{{item.app_name}}"
                          deploy_version="{{item.name}}">

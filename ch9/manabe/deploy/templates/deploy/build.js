@@ -32,7 +32,8 @@ $(".btn_gen_pkg").click(function(){
     var app_name = $("#modal_app_name").text();
     var jenkins_job = $("#modal_jenkins_job").text();
 
-    promiseJenkins = $.ajax({
+    //第一步，将任务发送到jenkins
+    var promiseJenkinsA = $.ajax({
         url:'{% url 'deploy:jenkins_build' %}',
         type: 'post',
         data:{
@@ -49,20 +50,63 @@ $(".btn_gen_pkg").click(function(){
          error: function (jqXHR, textStatus, errorThrown) {
             $("#build_progress").html("系统问题,请联系开发同事");
         },
-        success: function(json){
-            console.log(json);
-            if (json['return'] == "success") {
-                $("#build_progress").html(
-                    "<span class='label label-success radius'>完成编译, 编译次数："
-                    + json['build_number'] + "</span>");
-            }
-            if (json['return'] == "error") {
-                $("#build_progress").html(
-                "<span class='label label-error radius'>编译出错, 编译次数："
-                + json['build_number'] + "</span>");
-            }
-
+        success: function(data){
+            console.log(data);
         }
+    });
+
+    //第二步，获取jenkins job的任务状态，成功之后，更新状态和发布单
+    var promiseJenkinsB = promiseJenkinsA.then(function(data){
+        build_number = data['build_number']
+        function showStatus() {
+            $.ajax({
+                url:'{% url 'deploy:jenkins_status' %}',
+                type: 'post',
+                data:{
+                    jenkins_job: jenkins_job,
+                    next_build_number: build_number
+                },
+                dataType: 'json',
+                error: function (jqXHR, textStatus, errorThrown) {
+                    $("#build_progress").html("系统问题,请联系开发同事");
+                },
+                success: function(data){
+                    //当编译成功，或失败之后，清除定时器, 成功了就使用ajax post更新发布单状态。
+                    if (data['built_result'] == 'SUCCESS') {
+                        clearInterval(intervalKey);
+                        console.log(data['git_version'] + "update")
+                        $.post(
+                            "{% url 'deploy:update_deploypool_jenkins' %}",
+                            {
+                                git_version: data['git_version'],
+                                deploy_version: deploy_version,
+                                next_build_number: build_number,
+                                app_name:app_name
+                            },
+                            function(data) {
+                                if (data['return'] == 'success') {
+                                    $("#build_progress").html(
+                                    "<span class='label label-success radius'>完成编译, 编译次数："
+                                    + data['build_number'] + "</span>");
+                                } else {
+                                    $("#build_progress").html(
+                                    "<span class='label label-error radius'>编译成功, 更新发布单错误, 编译次数："
+                                    + data['build_number'] + "</span>");
+                                }
+                            }
+                        );
+                    }
+                    if (data['built_result'] == 'FAILURE') {
+                        clearInterval(intervalKey);
+                        $("#build_progress").html(
+                        "<span class='label label-error radius'>编译出错, 编译次数："
+                        + json['build_number'] + "</span>");
+                    }
+                }
+            });
+        }
+        //第隔二秒，获取jenkins的编译进度
+        intervalKey = setInterval(showStatus, 2000);
     });
 
 });
