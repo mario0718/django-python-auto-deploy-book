@@ -39,7 +39,10 @@ $("#btn-deploy").click(function(evt){
         dataType: 'json',
         beforeSend: function(){
             $('#btn-deploy').hide();
-            url = "/manabelog"
+            deploy_version = $("#id_deploy_version").attr("deploy_version");
+            app_name = $("#id_app_name").attr("app_name");
+            deploy_no = parseInt($("#id_deploy_no").attr("deploy_no")) + 1;
+            url = "http://127.0.0.1:8888/wslog/log_show/?app_name=" + app_name + "&deploy_version=" +  deploy_version + "&operation_no=" +  deploy_no +"&env_name=Demo"
             console.log(url);
             $('#iframe_log').attr('src', url);
             $('#deploylogout').show();

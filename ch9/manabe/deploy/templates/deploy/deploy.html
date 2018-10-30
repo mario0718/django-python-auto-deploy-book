@@ -2,18 +2,24 @@
 
 {% load staticfiles %}
 {% block title %} 部署服务器列表 {% endblock %}
+{% block ext-css%}
+<style id="antiClickjack">body{display:none !important;}</style>
+{% endblock%}
 
 {% block content %}
 <div>
     <span class="l">
         请仔细确认发布信息：
-        <span class="label label-primary radius">
+        <span class="label label-primary radius" id="id_app_name"
+        app_name="{{ app_name }}">
             {{ app_name }}
         </span>
-        <span class="label label-primary radius">
+        <span class="label label-primary radius" id="id_deploy_version"
+        deploy_version="{{ deploy_version }}">
             {{ deploy_version }}
         </span>
-        <span class="label label-primary radius">
+        <span class="label label-primary radius" id="id_env"
+        env="{{ env }}">
             {{ env }}
         </span>
         <span class="label label-primary radius">
@@ -35,7 +41,8 @@
             配置
             {% endifequal %}
         </span>
-        <span class="label label-primary radius">
+        <span class="label label-primary radius" id="id_deploy_no"
+        deploy_no="{{ deploy_no }}">
             部署日志:{{ deploy_no }}
         </span>
     </span>
@@ -203,6 +210,14 @@
 
 {% block script %}
     <script>
+
+
+    if (self === top) {
+    var antiClickjack = document.getElementById("antiClickjack");
+    antiClickjack.parentNode.removeChild(antiClickjack);
+    } else {
+    top.location = self.location;
+    }
     {% include "deploy/deploy.js" %}
     </script>
 {% endblock %}

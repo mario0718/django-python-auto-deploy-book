@@ -25,7 +25,7 @@ SECRET_KEY = 't7u-=z($kyhr8s=c-^^3l2w(t56#*97s!4d34zl)qvh2lh@nxo'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['*']
 
 
 # Application definition
@@ -130,7 +130,7 @@ STATIC_URL = '/static/'
 STATICFILES_DIRS = (os.path.join(BASE_DIR, "static"), )
 
 NGINX_URL = "http://192.168.1.111"
-
+MABLOG_URL = "http://127.0.0.1:8888"
 JENKINS_URL = "http://192.168.1.112:8088/"
 JENKINS_USERNAME = 'root'
 JENKINS_PASSWORD = 'adminadmin'

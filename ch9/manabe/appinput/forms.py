@@ -112,14 +112,12 @@ class AppForm(forms.ModelForm):
         ),
     )
 
-    script = forms.CharField(
-        required=True,
-        label=u"APP脚本",
-        widget=forms.Textarea(
+    script_url = forms.CharField(
+        label=u"app脚本链接",
+        widget=forms.TextInput(
             attrs={
-                'rows': 15,
-                'style': """width:75%;""",
-                'class': 'textarea',
+                'placeholder': "http://[nginx]/scripts/[app_name]/[script_name]",
+                'class': 'input-text',
             }
         ),
     )

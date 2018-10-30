@@ -38,7 +38,7 @@ class AppInputCreateView(CreateView):
             package_name=form.cleaned_data['package_name'],
             zip_package_name=form.cleaned_data['zip_package_name'],
             is_restart_status=form.cleaned_data['is_restart_status'],
-            script=form.cleaned_data['script'],
+            script_url=form.cleaned_data['script_url'],
             manage_user=form.cleaned_data['manage_user'],
         )
         return HttpResponseRedirect(reverse("appinput:list"))

@@ -155,24 +155,21 @@ def deploy_cmd(request):
         if cmd_data.startswith('p_value'):
             p_value = int(cmd_data.split('=')[1])
 
-    print(app_name, deploy_version, env, subserver_list, deploy_type, is_restart_server, operation_type, sp_type,
-          p_value)
-
     # 串行等同于批次多于子服务器数量的并行，在列表分组时，使用了函数表达式
     if sp_type == "serial_deploy" or p_value > len(subserver_list):
         p_value = len(subserver_list)
     deploy_subserver_list = mod_group(subserver_list, p_value)
     # 为了后面的启停及锁定的代码及日志一致性，这里重置发布单变量
-    deploy_version = deploy_version if deploy_version != '' else 'DEMO_VER'
+    deploy_version = deploy_version if deploy_version != '' else 'Demo'
 
-    if deploy_version == "DEMO_VER":
+    if deploy_version == "Demo":
         App.objects.filter(name=app_name).update(op_log_no=F('op_log_no') + 1)
         deploy_no = App.objects.get(name=app_name).op_log_no
     else:
         DeployPool.objects.filter(name=deploy_version).update(deploy_no=F('deploy_no') + 1)
         deploy_no = DeployPool.objects.get(name=deploy_version).deploy_no
-    deploy(deploy_subserver_list, deploy_type, is_restart_server, user_name, app_name,
-           deploy_version, deploy_no, operation_type, env)
+    deploy(deploy_subserver_list, deploy_type, is_restart_server,
+           user_name, deploy_version, operation_type)
 
     result = {'return': "OK"}
     return JsonResponse(result, status=200)

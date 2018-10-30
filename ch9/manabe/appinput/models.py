@@ -35,10 +35,10 @@ class App(CommonInfo):
                                     related_name="manage_user",
                                     on_delete=models.CASCADE,
                                     verbose_name="APP管理员")
-    script = models.TextField(max_length=65535,
-                              blank=True,
-                              null=True,
-                              verbose_name="APP服务脚本")
+    script_url = models.CharField(max_length=128,
+                                  blank=True,
+                                  null=True,
+                                  verbose_name="app脚本链接")
 
     def __str__(self):
         return self.name
