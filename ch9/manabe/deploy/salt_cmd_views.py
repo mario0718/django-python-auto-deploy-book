@@ -117,6 +117,7 @@ def cmd_run(server_id, action, user_name, percent_value,
         content = {'msg': 'error', 'ip': server_set.ip_address, 'action': action}
         add_history(user_name, server_set.app_name, deploypool_set, server_set.env_name, do_type, content)
         return False
+    time.sleep(2)
     return True
 
 

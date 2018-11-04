@@ -14,37 +14,14 @@
         app_name="{{ app_name }}">
             {{ app_name }}
         </span>
-        <span class="label label-primary radius" id="id_deploy_version"
-        deploy_version="{{ deploy_version }}">
-            {{ deploy_version }}
-        </span>
         <span class="label label-primary radius" id="id_env"
         env="{{ env }}">
             {{ env }}
         </span>
-        <span class="label label-primary radius">
-            {% ifequal is_inc_tot  "TOT" %}
-            全量部署
-            {% endifequal %}
-            {% ifequal is_inc_tot  "INC" %}
-            增量部署
-            {% endifequal %}
-        </span>
-        <span class="label label-primary radius">
-            {% ifequal deploy_type  "deployall" %}
-            程序及配置
-            {% endifequal %}
-            {% ifequal deploy_type  "deploypkg" %}
-            程序
-            {% endifequal %}
-            {% ifequal deploy_type  "deploycfg" %}
-            配置
-            {% endifequal %}
-        </span>
-        <span class="label label-primary radius" id="id_deploy_no"
-        deploy_no="{{ deploy_no }}" mablog_url="{{mablog_url}}">
-            <a  href="{{mablog_url}}/wslog/log_show/?app_name={{app_name}}&deploy_version={{deploy_version}}&operation_no={{deploy_no}}&env_name=Demo" target="_blank" >
-                部署日志:{{ deploy_no }}
+        <span class="label label-primary radius" id="id_op_log_no"
+        op_log_no="{{ op_log_no }}" mablog_url="{{mablog_url}}">
+            <a  href="{{mablog_url}}/wslog/log_show/?app_name={{app_name}}&deploy_version=Demo&operation_no={{op_log_no}}&env_name={{env}}" target="_blank" >
+                部署日志:{{ op_log_no }}
             </a>
         </span>
     </span>
@@ -72,12 +49,6 @@
             环境
         </th>
         <th>
-            当前版本
-        </th>
-        <th>
-            发布状态
-        </th>
-        <th>
             用户
         </th>
         <th>
@@ -98,16 +69,6 @@
                 {{item.env_name}}
             </td>
             <td>
-                {% ifequal deploy_version item.history_deploy|slice:"0:18" %}
-                <span class="label label-success radius">
-                {% else %}
-                <span class="label label-danger radius">
-                {% endifequal %}
-                {{ item.history_deploy|slice:"0:18"}}
-                </span>
-            </td>
-            <td>{{item.deploy_status}}</td>
-            <td>
                 {{item.op_user}}
             </td>
             <td>{{item.change_date}}</td>
@@ -119,7 +80,7 @@
     <br/>
     {% if is_right %}
     <div class="text-l">
-        <input type="text" name="operation_type"  value="deploy" hidden/>
+        <input type="text" name="operation_type"  value="operate" hidden/>
         <input type="text" name="deploy_version"  value="{{ deploy_version }}" hidden/>
         <input type="text" name="env"  value="{{ env }}" hidden/>
         <input type="text" name="app_name"  value="{{ app_name }}" hidden/>
@@ -130,40 +91,20 @@
             </select>
         </span>
         <span class="select-box inline l">
-            <select class="select" name="is-restart-server" id="is-restart-server" >
-                {% ifequal is_restart_status  True %}
-                    <option selected="true"   value="restart">重启服务</option>
-                    <option value="norestart" >禁止重启</option>
-                {% endifequal %}
-
-                {% ifequal is_restart_status  False %}
-                    <option  selected="true" value="norestart" >禁止重启</option>
-                    <option  value="restart">重启服务</option>
-                {% endifequal %}
-            </select>
-        </span>
-        <span class="select-box inline l">
             <select class="select" name="deploy_type" id="deploy_type" >
-                {% ifequal deploy_type  "deployall" %} selected="true"
-                    <option selected="true"  value="deployall">发布所有</option>
-                {% endifequal %}
-                {% ifequal deploy_type  "deploypkg" %} selected="true"
-                        <option selected="true"  value="deploypkg">发布程序</option>
-                {% endifequal %}
-                {% ifequal deploy_type  "deploycfg" %} selected="true"
-                        <option selected="true"  value="deploycfg">发布配置</option>
-                {% endifequal %}
-
-                <option value="rollback">回滚</option>
+                <option  value="">请选择</option>
+                <option  value="restart">重启</option>
+                <option  value="start">启动</option>
+                <option  value="stop">停止</option>
             </select>
         </span>
         <span >
-            <button class="btn btn-danger radius" id="btn-deploy">立即部署</button>
+            <button class="btn btn-danger radius" id="btn-operate">立即操作</button>
         </span>
     </div>
     {% else %}
     <div class="Huialert Huialert-error"><i class="Hui-iconfont">&#xe6a6;</i>
-        你没有{{ app_name }}的{{ env }}环境的发布权限，请联系管理员：{{ admin_user }}
+        你没有操作权限，请联系管理员：{{ admin_user }}
     </div>
     {% endif %}
 </form>

@@ -3,7 +3,7 @@ from django.contrib.auth.decorators import login_required
 
 from .views import DeployCreateView, DeployUpdateView, DeployDetailView, DeployListView
 from .views import jenkins_build, jenkins_status, update_deploypool_jenkins
-from .deploy_views import PublishView, DeployView, OperateView, HistoryView, deploy_cmd
+from .deploy_views import PublishView, DeployView, OperateView, OperateAppView, HistoryView, deploy_cmd
 from .upload_views import DeployVersionUploadView, fileupload
 
 app_name = 'deploy'
@@ -41,6 +41,9 @@ urlpatterns += [
 
     path('operate/', login_required(OperateView.as_view()),
          name='operate'),
+    path('operate/<slug:app_name>/<slug:env>/',
+         login_required(OperateAppView.as_view()),
+         name='operate_app'),
     path('history/', login_required(HistoryView.as_view()),
              name='history'),
 ]
