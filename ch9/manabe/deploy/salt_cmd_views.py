@@ -57,7 +57,7 @@ def cmd_run(server_id, action, user_name, percent_value,
     tgt = server_set.salt_name
     port = server_set.port
     app_user = server_set.app_user
-    env_name = server_set.env_name.name
+    env_name = server_set.env_name.name.lower()
     app_name = server_set.app_name.name
     script_url = server_set.app_name.script_url
     zip_package_name = server_set.app_name.zip_package_name
@@ -92,7 +92,7 @@ def cmd_run(server_id, action, user_name, percent_value,
         result_retcode = result['return'][0][tgt]['retcode']
         result_stderr = result['return'][0][tgt]['stderr']
         result_stdout = result['return'][0][tgt]['stdout'].replace("\r\n", "")
-        print(result_retcode, result_stderr, result_stdout, "@@@@@@@@@@@@@")
+        print(result_retcode, result_stderr, result_stdout, result, "@@@@@@@@@@@@@")
     except:
         return False
     if result_retcode == 0:
