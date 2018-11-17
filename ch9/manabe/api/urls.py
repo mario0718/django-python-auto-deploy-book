@@ -7,10 +7,10 @@ from . import views
 
 # Create a router and register our viewsets with it.
 router = DefaultRouter()
-router.register(r'users', views.UserViewSet, base_name="users")
-router.register(r'deploypool', views.DeployPoolViewSet, base_name="deploypool")
-router.register(r'server', views.ServerViewSet, base_name="server")
-router.register(r'app', views.AppViewSet, base_name="app")
+router.register(r'users', views.UserViewSet, base_name="user")
+router.register(r'deploypools', views.DeployPoolViewSet, base_name="deploypool")
+router.register(r'servers', views.ServerViewSet, base_name="server")
+router.register(r'apps', views.AppViewSet, base_name="app")
 
 # The API URLs are now determined automatically by the router.
 # Additionally, we include the login URLs for the browsable API.
