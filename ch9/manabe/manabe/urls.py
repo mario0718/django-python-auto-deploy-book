@@ -19,6 +19,7 @@ from django.views.generic import TemplateView
 from django.contrib.auth.decorators import login_required
 from .views import IndexView, user_login, user_register, change_password
 from django.contrib.auth.views import logout_then_login
+from rest_framework.authtoken import views
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -52,4 +53,10 @@ urlpatterns += [
 
 urlpatterns += [
     path('rightadmin/', include('rightadmin.urls')),
+]
+
+# RESTful api
+urlpatterns += [
+    path('api-token-auth/', views.obtain_auth_token),
+    path('api/', include('api.urls')),
 ]
